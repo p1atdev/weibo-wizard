@@ -26,7 +26,13 @@ await new Command()
 
                 const cards = await getUserCards(userId, limit, container)
 
-                log.info(cards.length, "cards found!")
+                log.success(cards.length, "cards found!")
+
+                log.info("Writing to file...")
+
+                await Deno.writeTextFile(output, JSON.stringify(cards, null, ""))
+
+                log.success("Done! Saved to", output)
             })
             .command("search <query:string>", "Dump searched posts data")
             .option("-o, --output <file:string>", "Output file path", { default: "./output.json" })
@@ -57,7 +63,13 @@ await new Command()
 
                 const cards = await getSearchCards(userId, limit, container)
 
-                log.info(cards.length, "cards found!")
+                log.success(cards.length, "cards found!")
+
+                log.info("Writing to file...")
+
+                await Deno.writeTextFile(output, JSON.stringify(cards, null, ""))
+
+                log.success("Done! Saved to", output)
             })
     )
     .parse(Deno.args)
