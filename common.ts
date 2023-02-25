@@ -7,6 +7,7 @@ export enum UserContainerId {
 
 export enum SearchContainerId {
     all = "231522type=1",
+    hot = "231522type=60",
     media = "231522type=63",
 }
 

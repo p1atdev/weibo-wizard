@@ -34,7 +34,7 @@ Deno.test("weibo client get same user", async () => {
     assertExists(second)
     assertEquals(second.ok, 1)
 
-    assertEquals(first.data.cards[0].itemid, second.data.cards[0].itemid)
+    assertEquals(flatCards(first.data.cards)[0].itemid, flatCards(second.data.cards)[0].itemid)
 })
 
 Deno.test("weibo client get user towice", async () => {
@@ -45,7 +45,7 @@ Deno.test("weibo client get user towice", async () => {
         containerId: UserContainerId.weibo,
     })
 
-    assertExists(first.data.cards[0].itemid)
+    assertExists(flatCards(first.data.cards)[0].itemid)
     assertEquals(first.ok, 1)
 
     const since = first.data.cardlistInfo.since_id
@@ -56,10 +56,10 @@ Deno.test("weibo client get user towice", async () => {
         sinceId: since,
     })
 
-    assertExists(second.data.cards[0].itemid)
+    assertExists(flatCards(second.data.cards)[0].itemid)
     assertEquals(second.ok, 1)
 
-    assertNotEquals(first.data.cards[0].itemid, second.data.cards[0].itemid)
+    assertNotEquals(flatCards(first.data.cards)[0].itemid, flatCards(second.data.cards)[0].itemid)
 })
 
 Deno.test("weibo client search hash tag", async () => {

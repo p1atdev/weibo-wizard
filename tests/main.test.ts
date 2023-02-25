@@ -18,6 +18,22 @@ Deno.test("get 100 user cards", async () => {
     cards.forEach((card) => assertExists(card))
 })
 
+Deno.test("get 30 user album cards", async () => {
+    const count = 30
+    const cards = await getUserCards("6441489862", count, UserContainerId.album)
+
+    assertEquals(cards.length, count)
+    cards.forEach((card) => assertExists(card))
+})
+
+Deno.test("get 100 user album cards", async () => {
+    const count = 100
+    const cards = await getUserCards("6441489862", count, UserContainerId.album)
+
+    assertEquals(cards.length, count)
+    cards.forEach((card) => assertExists(card))
+})
+
 Deno.test("search 30 hash tag cards", async () => {
     const count = 30
     const cards = await getSearchCards("#明日方舟#", count, SearchContainerId.all)
