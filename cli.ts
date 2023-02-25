@@ -1,5 +1,5 @@
 import { SearchContainerId, UserContainerId } from "./common.ts"
-import { Command, colors, tty } from "./deps.ts"
+import { Command } from "./deps.ts"
 import { log } from "./log.ts"
 import { getSearchCards, getUserCards, getPicsFromCards, downloadImages } from "./main.ts"
 
@@ -22,7 +22,7 @@ await new Command()
 
                 const container = UserContainerId.weibo
 
-                log.info("Downloading...")
+                log.info("Download started")
 
                 const cards = await getUserCards(userId, limit, container)
 
@@ -59,7 +59,7 @@ await new Command()
                     }
                 })()
 
-                log.info("Downloading...")
+                log.info("Downloading started")
 
                 const cards = await getSearchCards(userId, limit, container)
 

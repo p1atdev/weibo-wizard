@@ -1,6 +1,6 @@
 import { WeiboClient } from "./client.ts"
 import { SearchContainerId, UserContainerId } from "./common.ts"
-import { tty, colors } from "./deps.ts"
+import { tty, colors, join, basename, extname } from "./deps.ts"
 import { log } from "./log.ts"
 import { Card, Type9Card } from "./types/card.ts"
 
@@ -98,29 +98,62 @@ export const getPicsFromCards = (cards: Card[]) => {
     return Array.from(new Set(pics))
 }
 
-export const downloadImage = async (url: string, outputDir: string) => {
-    const filename = url.split("/").pop() ?? ""
+export const downloadImage = async (
+    url: string,
+    filename: string,
+    outputDir: string,
+    maxRetry: number = 5,
+    allowedExt: string[] = [".jpg"]
+) => {
+    const ext = extname(filename)
+    if (!allowedExt.includes(ext)) {
+        tty.eraseLine.cursorSave.text(`${colors.yellow("[WARN]")} ${filename} is not supported file type. Skipped.`)
+            .cursorRestore
+        return
+    }
 
     try {
-        await Deno.stat(`${outputDir}/${filename}`)
+        await Deno.stat(join(outputDir, filename))
 
-        tty.eraseLine.cursorSave.text(`${colors.yellow("[WARN]")} Image already exists: ${url}. Skipped.`).cursorRestore
+        tty.eraseLine.cursorSave.text(`${colors.yellow("[WARN]")} Image already exists: ${filename}. Skipped.`)
+            .cursorRestore
 
         return
     } catch {
         // pass
     }
 
-    const res = await fetch(url)
+    let retry = 0
 
-    if (!res.ok) {
-        log.error(`Download image failed: ${url}`)
-        return
+    while (true) {
+        if (retry > maxRetry) {
+            log.error(`Download image failed: ${url}`)
+            return
+        }
+
+        try {
+            const res = await fetch(url)
+
+            if (!res.ok) {
+                throw new Error(`Download image failed: ${url}`)
+            }
+
+            const buffer = await res.arrayBuffer()
+
+            const outputFilePath = `${outputDir}/${filename}`
+
+            await Deno.writeFile(outputFilePath, new Uint8Array(buffer))
+
+            break
+        } catch (e) {
+            tty.eraseLine.cursorSave.text(`${colors.red("[ERROR]")} ${e}`).cursorRestore
+
+            // wait 1 sec
+            await new Promise((resolve) => setTimeout(resolve, 1000))
+        } finally {
+            retry += 1
+        }
     }
-
-    const buffer = await res.arrayBuffer()
-
-    await Deno.writeFile(`${outputDir}/${filename}`, new Uint8Array(buffer))
 }
 
 export const downloadImages = async (pics: string[], outputDir: string, total: number, batch: number) => {
@@ -136,9 +169,12 @@ export const downloadImages = async (pics: string[], outputDir: string, total: n
 
         const task = async () => {
             for (const url of pics.slice(start, end)) {
-                tty.eraseLine.cursorSave.text(`${colors.blue("[INFO]")} Downloading ${url.split("/").pop()} ...`)
+                // get filename, without any query params
+                const filename = basename(url.split("?")[0])
+
+                tty.eraseLine.cursorSave.text(`${colors.blue("[INFO]")} Downloading ${colors.underline(filename)} ...`)
                     .cursorRestore
-                await downloadImage(url, outputDir)
+                await downloadImage(url, filename, outputDir)
             }
         }
 
