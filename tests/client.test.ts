@@ -1,6 +1,7 @@
 import { WeiboClient } from "../client.ts"
 import { UserContainerId } from "../common.ts"
 import { assertExists, assertNotEquals, assertEquals } from "../deps.ts"
+import { flatCards } from "../main.ts"
 
 Deno.test("weibo client get user", async () => {
     const client = new WeiboClient()
@@ -84,6 +85,8 @@ Deno.test("weibo client search hash tag same two page", async () => {
     assertExists(first)
     assertEquals(first.ok, 1)
 
+    const firstCards = flatCards(first.data.cards)
+
     const second = await client.search({
         value: "#明日方舟#",
         page,
@@ -92,7 +95,11 @@ Deno.test("weibo client search hash tag same two page", async () => {
     assertExists(second)
     assertEquals(second.ok, 1)
 
-    assertEquals(first.data.cards[0].itemid, second.data.cards[0].itemid)
+    const secondCards = flatCards(second.data.cards)
+
+    firstCards.forEach((card, i) => {
+        assertEquals(card.mblog.itemid, secondCards[i].mblog.itemid)
+    })
 })
 
 Deno.test("weibo client search hash tag two pages", async () => {
@@ -105,6 +112,8 @@ Deno.test("weibo client search hash tag two pages", async () => {
     assertExists(first)
     assertEquals(first.ok, 1)
 
+    const firstCards = flatCards(first.data.cards)
+
     const second = await client.search({
         value: "#明日方舟#",
         page: 2,
@@ -113,7 +122,9 @@ Deno.test("weibo client search hash tag two pages", async () => {
     assertExists(second)
     assertEquals(second.ok, 1)
 
-    assertNotEquals(first.data.cards[0].itemid, second.data.cards[0].itemid)
+    const secondCards = flatCards(second.data.cards)
+
+    assertNotEquals(firstCards[0].itemid, secondCards[0].itemid)
 })
 
 Deno.test("weibo client search hash tag and normal search", async () => {
@@ -126,6 +137,8 @@ Deno.test("weibo client search hash tag and normal search", async () => {
     assertExists(first)
     assertEquals(first.ok, 1)
 
+    const firstCards = flatCards(first.data.cards)
+
     const second = await client.search({
         value: "明日方舟",
     })
@@ -133,5 +146,7 @@ Deno.test("weibo client search hash tag and normal search", async () => {
     assertExists(second)
     assertEquals(second.ok, 1)
 
-    assertNotEquals(first.data.cards[0].itemid, second.data.cards[0].itemid)
+    const secondCards = flatCards(second.data.cards)
+
+    assertNotEquals(firstCards[0].itemid, secondCards[0].itemid)
 })
