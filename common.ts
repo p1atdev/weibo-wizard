@@ -1,8 +1,8 @@
 export enum UserContainerId {
-    profile = "2302836441489862",
-    weibo = "1076036441489862",
-    video = "2315676441489862",
-    album = "1078036441489862",
+    profile = "230283",
+    weibo = "107603",
+    video = "231567",
+    album = "107803",
 }
 
 export enum SearchContainerId {
