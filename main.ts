@@ -97,3 +97,55 @@ export const getPicsFromCards = (cards: Card[]) => {
 
     return Array.from(new Set(pics))
 }
+
+export const downloadImage = async (url: string, outputDir: string) => {
+    const filename = url.split("/").pop() ?? ""
+
+    try {
+        await Deno.stat(`${outputDir}/${filename}`)
+
+        tty.eraseLine.cursorSave.text(`${colors.yellow("[WARN]")} Image already exists: ${url}. Skipped.`).cursorRestore
+
+        return
+    } catch {
+        // pass
+    }
+
+    const res = await fetch(url)
+
+    if (!res.ok) {
+        log.error(`Download image failed: ${url}`)
+        return
+    }
+
+    const buffer = await res.arrayBuffer()
+
+    await Deno.writeFile(`${outputDir}/${filename}`, new Uint8Array(buffer))
+}
+
+export const downloadImages = async (pics: string[], outputDir: string, total: number, batch: number) => {
+    const tasks: Promise<void>[] = []
+
+    const count = Math.ceil(total / batch)
+
+    tty.cursorDown.cursorSave
+
+    for (let i = 0; i < batch; i++) {
+        const start = i * count
+        const end = Math.min((i + 1) * count, total)
+
+        const task = async () => {
+            for (const url of pics.slice(start, end)) {
+                tty.eraseLine.cursorSave.text(`${colors.blue("[INFO]")} Downloading ${url.split("/").pop()} ...`)
+                    .cursorRestore
+                await downloadImage(url, outputDir)
+            }
+        }
+
+        tasks.push(task())
+    }
+
+    await Promise.all(tasks)
+
+    tty.cursorDown.eraseLine.text("")
+}

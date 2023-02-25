@@ -1,7 +1,7 @@
 import { SearchContainerId, UserContainerId } from "./common.ts"
 import { Command, colors, tty } from "./deps.ts"
 import { log } from "./log.ts"
-import { getSearchCards, getUserCards } from "./main.ts"
+import { getSearchCards, getUserCards, getPicsFromCards, downloadImages } from "./main.ts"
 
 await new Command()
     .name("weibo-wizard")
@@ -72,4 +72,43 @@ await new Command()
                 log.success("Done! Saved to", output)
             })
     )
+    .command("download", "Download posts")
+    .arguments("<file:string>")
+    .option("-o, --output <dir:string>", "Output directory", { default: "./output" })
+    .option("-b, --batch <batch:number>", "Batch size", { default: 10 })
+    .option("-l, --limit <limit:number>", "Limit of posts", { required: false })
+    .action(async ({ output, batch, limit }, file) => {
+        log.info("Dumping user posts data")
+        log.info("Input json:", file)
+        log.info("Output file:", output)
+        log.info("Limit:", limit)
+
+        await Deno.mkdir(output, {
+            recursive: true,
+        })
+
+        try {
+            await Deno.stat(file)
+        } catch {
+            log.error("Input file not found")
+            Deno.exit(1)
+        }
+
+        const json = JSON.parse(await Deno.readTextFile(file))
+
+        log.success(json.length, "cards found!")
+
+        const pics = getPicsFromCards(json)
+
+        log.success(pics.length, "images found!")
+
+        const total = limit ? Math.min(limit, pics.length) : pics.length
+
+        log.info("Downloading images...")
+
+        await downloadImages(pics, output, total, batch)
+
+        log.success("Done! Saved to", output)
+    })
+
     .parse(Deno.args)
