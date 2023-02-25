@@ -52,7 +52,7 @@ Deno.test("weibo client get user towice", async () => {
     const second = await client.getUser({
         userId: "6441489862",
         containerId: UserContainerId.weibo,
-        since_id: since,
+        sinceId: since,
     })
 
     assertExists(second.data.cards[0].itemid)
