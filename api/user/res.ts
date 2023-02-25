@@ -35,15 +35,17 @@ export interface Mblog {
     can_edit: boolean
     show_additional_indication: number
     text: string
-    source: Source
+    textLength?: number
+    source: string
     favorited: boolean
-    pic_ids: any[]
+    pic_ids: string[]
+    thumbnail_pic?: string
+    bmiddle_pic?: string
+    original_pic?: string
     is_paid: boolean
     mblog_vip_type: number
     user: MblogUser
-    pid?: number
-    pidstr?: string
-    retweeted_status: RetweetedStatus
+    picStatus?: string
     reposts_count: number
     comments_count: number
     reprint_cmt_count: number
@@ -52,33 +54,41 @@ export interface Mblog {
     isLongText: boolean
     mlevel: number
     show_mlevel: number
-    darwin_tags: any[]
+    topic_id?: string
+    sync_mblog?: boolean
+    is_imported_topic?: boolean
+    expire_time?: number
+    ad_state?: number
+    darwin_tags: DarwinTag[]
     hot_page: HotPage
     mblogtype: number
+    mark?: string
     rid: string
-    cardid: Cardid
+    attitude_dynamic_adid?: string
+    cardid: string
     extern_safe: number
     number_display_strategy: NumberDisplayStrategy
     content_auth: number
-    safe_tags: number
+    safe_tags?: number
     comment_manage_info: CommentManageInfo
-    repost_type: number
     pic_num: number
+    jump_type?: number
     new_comment_style: number
     ab_switcher: number
-    region_name: RegionName
+    region_name: string
     region_opt: number
     pic_bg: string
     pic_bg_type: number
     mblog_menu_new_style: number
-    edit_config: EditConfig
-    raw_text: string
+    edit_config: MblogEditConfig
+    page_info?: MblogPageInfo
+    pics?: MblogPic[]
     bid: string
-    mark?: string
-}
-
-export enum Cardid {
-    Star555 = "star_555",
+    retweeted_status?: RetweetedStatus
+    repost_type?: number
+    raw_text?: string
+    pid?: number
+    pidstr?: string
 }
 
 export interface CommentManageInfo {
@@ -88,33 +98,69 @@ export interface CommentManageInfo {
     ai_play_picture_type?: number
 }
 
-export interface EditConfig {
+export interface DarwinTag {
+    object_type: string
+    object_id: string
+    display_name: string
+    enterprise_uid: null
+    pc_url: string
+    mapi_url: string
+    bd_object_type: string
+}
+
+export interface MblogEditConfig {
     edited: boolean
 }
 
 export interface HotPage {
-    fid: Fid
+    fid: string
     feed_detail_type: number
-}
-
-export enum Fid {
-    The232532_Mblog = "232532_mblog",
-    The232532_Supergroup = "232532_supergroup",
 }
 
 export interface NumberDisplayStrategy {
     apply_scenario_flag: number
     display_text_min_number: number
-    display_text: DisplayText
+    display_text: string
 }
 
-export enum DisplayText {
-    The100U4E07 = "100u4e07+",
+export interface MblogPageInfo {
+    type: string
+    object_type: number
+    page_pic: PurplePagePic
+    page_url: string
+    page_title: string
+    content1: string
+    content2?: string
 }
 
-export enum RegionName {
-    U53D1U5E03U4E8EU56Dbu5Ddd = "u53d1u5e03u4e8e u56dbu5ddd",
-    U53D1U5E03U4E8EU5E7Fu4E1C = "u53d1u5e03u4e8e u5e7fu4e1c",
+export interface PurplePagePic {
+    url: string
+}
+
+export interface MblogPic {
+    pid: string
+    url: string
+    size: string
+    geo: PicGeo
+    large: Large
+}
+
+export interface PicGeo {
+    width: number
+    height: number
+    croped: boolean
+}
+
+export interface Large {
+    size: string
+    url: string
+    geo: LargeGeo
+}
+
+export interface LargeGeo {
+    width: number | string
+    height: number | string
+    croped: boolean
 }
 
 export interface RetweetedStatus {
@@ -129,13 +175,13 @@ export interface RetweetedStatus {
     source: string
     favorited: boolean
     pic_ids: string[]
-    thumbnail_pic: string
-    bmiddle_pic: string
-    original_pic: string
+    thumbnail_pic?: string
+    bmiddle_pic?: string
+    original_pic?: string
     is_paid: boolean
     mblog_vip_type: number
     user: RetweetedStatusUser
-    picStatus: PicStatus
+    picStatus?: string
     reposts_count: number
     comments_count: number
     reprint_cmt_count: number
@@ -144,9 +190,6 @@ export interface RetweetedStatus {
     isLongText: boolean
     mlevel: number
     show_mlevel: number
-    topic_id?: string
-    sync_mblog?: boolean
-    is_imported_topic?: boolean
     darwin_tags: DarwinTag[]
     hot_page: HotPage
     mblogtype: number
@@ -154,89 +197,87 @@ export interface RetweetedStatus {
     cardid?: string
     number_display_strategy: NumberDisplayStrategy
     content_auth: number
-    safe_tags: number
+    safe_tags?: number
     comment_manage_info: CommentManageInfo
     pic_num: number
-    jump_type?: number
     new_comment_style: number
-    region_name: RegionName
+    region_name: string
     region_opt: number
-    edit_config: EditConfig
-    page_info: PageInfo
-    pics: Pic[]
+    edit_config: RetweetedStatusEditConfig
+    pics?: RetweetedStatusPic[]
     bid: string
+    edit_count?: number
+    edit_at?: string
+    topic_id?: string
+    sync_mblog?: boolean
+    is_imported_topic?: boolean
+    jump_type?: number
+    page_info?: RetweetedStatusPageInfo
+    pic_video?: string
     expire_time?: number
     ad_state?: number
     mark?: string
+    live_photo?: string[]
+    fid?: number
 }
 
-export interface DarwinTag {
-    object_type: string
-    object_id: string
-    display_name: string
-    enterprise_uid: null
-    pc_url?: string
-    mapi_url?: string
-    bd_object_type: string
+export interface RetweetedStatusEditConfig {
+    edited: boolean
+    menu_edit_history?: MenuEditHistory
 }
 
-export interface PageInfo {
-    type: Type
+export interface MenuEditHistory {
+    scheme: string
+    title: string
+}
+
+export interface RetweetedStatusPageInfo {
+    type: string
     object_type: number
-    page_pic: PagePic
+    page_pic: FluffyPagePic
     page_url: string
     page_title: string
     content1: string
     content2?: string
+    url_ori?: string
+    object_id?: string
+    title?: string
+    video_orientation?: string
+    play_count?: string
+    media_info?: MediaInfo
+    urls?: Urls
 }
 
-export interface PagePic {
+export interface MediaInfo {
+    stream_url: string
+    stream_url_hd: string
+    duration: number
+}
+
+export interface FluffyPagePic {
     url: string
-    height?: string
-    width?: string
+    width?: number
+    pid?: string
+    source?: number
+    is_self_cover?: number
+    type?: number
+    height?: number
 }
 
-export enum Type {
-    SearchTopic = "search_topic",
-    Topic = "topic",
+export interface Urls {
+    mp4_720p_mp4: string
+    mp4_hd_mp4: string
+    mp4_ld_mp4: string
 }
 
-export enum PicStatus {
-    The011121314151617181 = "0:1,1:1,2:1,3:1,4:1,5:1,6:1,7:1,8:1",
-}
-
-export interface Pic {
+export interface RetweetedStatusPic {
     pid: string
     url: string
-    size: PicSize
+    size: string
     geo: PicGeo
     large: Large
-}
-
-export interface PicGeo {
-    width: number
-    height: number
-    croped: boolean
-}
-
-export interface Large {
-    size: LargeSize
-    url: string
-    geo: LargeGeo
-}
-
-export interface LargeGeo {
-    width: number | string
-    height: number | string
-    croped: boolean
-}
-
-export enum LargeSize {
-    Large = "large",
-}
-
-export enum PicSize {
-    Orj360 = "orj360",
+    videoSrc?: string
+    type?: string
 }
 
 export interface RetweetedStatusUser {
@@ -268,33 +309,24 @@ export interface RetweetedStatusUser {
     verified_reason?: string
 }
 
-export enum Gender {
-    F = "f",
-    M = "m",
-}
-
 export interface Visible {
     type: number
     list_id: number
 }
 
-export enum Source {
-    IPhone14ProMax = "iPhone 14 Pro Max",
-}
-
 export interface MblogUser {
     id: number
-    screen_name: ScreenName
+    screen_name: string
     profile_image_url: string
     profile_url: string
     statuses_count: number
     verified: boolean
     verified_type: number
     verified_type_ext: number
-    verified_reason: VerifiedReason
+    verified_reason: string
     close_blue_v: boolean
     description: string
-    gender: Gender
+    gender: string
     mbtype: number
     svip: number
     urank: number
@@ -302,8 +334,8 @@ export interface MblogUser {
     follow_me: boolean
     following: boolean
     follow_count: number
-    followers_count: FollowersCount
-    followers_count_str: FollowersCount
+    followers_count: string
+    followers_count_str: string
     cover_image_phone: string
     avatar_hd: string
     like: boolean
@@ -311,14 +343,7 @@ export interface MblogUser {
     badge: { [key: string]: number }
 }
 
-export enum FollowersCount {
-    The905U4E07 = "90.5u4e07",
-}
-
-export enum ScreenName {
-    Wu767Eu5408U6B27U7687U5B50W = "wu767eu5408u6b27u7687u5b50w",
-}
-
-export enum VerifiedReason {
-    U77E5U540Du52A8U6F2Bu535Au4E3B = "u77e5u540du52a8u6f2bu535au4e3b",
+export enum Gender {
+    F = "f",
+    M = "m",
 }
