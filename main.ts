@@ -125,12 +125,7 @@ export const downloadImage = async (
 
     let retry = 0
 
-    while (true) {
-        if (retry > maxRetry) {
-            log.error(`Download image failed: ${url}`)
-            return
-        }
-
+    while (retry > maxRetry) {
         try {
             const res = await fetch(url)
 

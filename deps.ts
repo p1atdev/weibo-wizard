@@ -8,4 +8,4 @@ export * from "https://deno.land/x/cliffy@v0.25.7/mod.ts"
 export { tty, colors } from "https://deno.land/x/cliffy@v0.25.7/ansi/mod.ts"
 
 // path
-export { join, extname, basename } from "https://deno.land/std@0.178.0/path/mod.ts"
+export { join, extname, basename, dirname } from "https://deno.land/std@0.178.0/path/mod.ts"

@@ -1,5 +1,5 @@
 import { SearchContainerId, UserContainerId } from "./common.ts"
-import { Command } from "./deps.ts"
+import { Command, dirname } from "./deps.ts"
 import { log } from "./log.ts"
 import { getSearchCards, getUserCards, getPicsFromCards, downloadImages } from "./main.ts"
 
@@ -29,6 +29,9 @@ await new Command()
                 log.success(cards.length, "cards found!")
 
                 log.info("Writing to file...")
+
+                const parentDir = dirname(output)
+                await Deno.mkdir(parentDir, { recursive: true })
 
                 await Deno.writeTextFile(output, JSON.stringify(cards, null, ""))
 
@@ -67,6 +70,9 @@ await new Command()
 
                 log.info("Writing to file...")
 
+                const parentDir = dirname(output)
+                await Deno.mkdir(parentDir, { recursive: true })
+
                 await Deno.writeTextFile(output, JSON.stringify(cards, null, ""))
 
                 log.success("Done! Saved to", output)
@@ -74,7 +80,7 @@ await new Command()
     )
     .command("download", "Download posts")
     .arguments("<file:string>")
-    .option("-o, --output <dir:string>", "Output directory", { default: "./output" })
+    .option("-o, --output <dir:string>", "Output directory", { required: false })
     .option("-b, --batch <batch:number>", "Batch size", { default: 10 })
     .option("-l, --limit <limit:number>", "Limit of posts", { required: false })
     .action(async ({ output, batch, limit }, file) => {
@@ -83,7 +89,9 @@ await new Command()
         log.info("Output file:", output)
         log.info("Limit:", limit)
 
-        await Deno.mkdir(output, {
+        const outputPath = output || file.replace(/\.json$/, "")
+
+        await Deno.mkdir(outputPath, {
             recursive: true,
         })
 
@@ -106,9 +114,9 @@ await new Command()
 
         log.info("Downloading images...")
 
-        await downloadImages(pics, output, total, batch)
+        await downloadImages(pics, outputPath, total, batch)
 
-        log.success("Done! Saved to", output)
+        log.success("Done! Saved to", outputPath)
     })
 
     .parse(Deno.args)
