@@ -1,4 +1,4 @@
-export enum ContainerId {
+export enum UserContainerId {
     profile = "2302836441489862",
     weibo = "1076036441489862",
     video = "2315676441489862",
@@ -9,11 +9,6 @@ export enum SearchContainerId {
     all = "231522type=1",
     media = "231522type=63",
 }
-
-// export enum SearchContainerId {
-//     all = "100103type=1",
-//     media = "100103type=63",
-// }
 
 export enum HostURL {
     api = "https://m.weibo.cn",

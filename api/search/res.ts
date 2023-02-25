@@ -1,5 +1,3 @@
-import { Badge, Large, PicGeo } from "../../types/common.ts"
-
 export interface Res {
     ok: number
     data: Data
@@ -8,7 +6,7 @@ export interface Res {
 export interface Data {
     cardlistInfo: CardlistInfo
     cards: Card[]
-    ext_trans?: EXTTrans
+    ext_trans: EXTTrans
     scheme: string
     showAppTips: number
 }
@@ -28,8 +26,8 @@ export interface CardlistInfo {
     hide_oids: string[]
     common_hide_type: { [key: string]: number }
     show_style: number
-    cardlist_title: string
-    shared_text: string
+    cardlist_title: CardlistTitle
+    shared_text: CardlistTitle
     share_containerid: string
     object_id: string
     desc: string
@@ -66,9 +64,13 @@ export interface Log {
     ext: string
     luicode: null
     uicode?: null
-    fid: string
+    fid: ActionlogFid
     lfid: null
     cardid?: string
+}
+
+export enum ActionlogFid {
+    The231522Type1T10QU660Eu65E5U65B9U821F = "231522type=1&t=10&q=#u660eu65e5u65b9u821f#",
 }
 
 export interface HeadData {
@@ -81,7 +83,7 @@ export interface HeadData {
     portrait_sub_text: string
     portrait_sub_text_color: string
     portrait_sub_color: string
-    title: string
+    title: CardlistTitle
     midtext: string
     downtext: string
     theme_background_color: string
@@ -96,6 +98,12 @@ export interface HeadData {
     title_tag_height: number
     ext_card: any[]
     cover_url: null
+}
+
+export enum CardlistTitle {
+    U3010U8D85U8Bddu3011U660Eu65E5U65B9U821F = "u3010u8d85u8bddu3011u660eu65e5u65b9u821f",
+    U660Eu65E5U65B9U821F = "#u660eu65e5u65b9u821f#",
+    U94C1U677Fu70E7U9B3Cu821Ewu7684U5Faeu535Au89C6U9891 = "u94c1u677fu70e7u9b3cu821ewu7684u5faeu535au89c6u9891",
 }
 
 export interface ShareContent {
@@ -149,7 +157,7 @@ export interface Card {
     show_type?: number
     scheme?: string
     container_color?: ContainerColor
-    container_color_dark?: string
+    container_color_dark?: ErColorDark
     barrage_speed?: number
     flow_comment_row?: number
     bgcolor?: string
@@ -163,7 +171,7 @@ export interface Card {
     margin_top?: number
     margin_bottom?: number
     bg_border_color?: string
-    bg_border_color_dark?: string
+    bg_border_color_dark?: ErColorDark
     bg_border_radius?: number
     title_info?: TitleInfo
     content_info?: ContentInfo
@@ -176,6 +184,10 @@ export interface Card {
     is_asyn?: number
     async_api?: string
     title?: string
+}
+
+export enum ErColorDark {
+    The151515 = "#151515",
 }
 
 export interface CardGroup {
@@ -191,7 +203,7 @@ export interface CardGroup {
     show_type?: number
     scheme?: string
     container_color?: ContainerColor
-    container_color_dark?: string
+    container_color_dark?: ErColorDark
     desc?: string
     analysis_extra?: string
     display_type?: number
@@ -206,7 +218,7 @@ export interface CardGroup {
     user?: CardGroupUser
     desc1?: string
     buttons?: CardGroupButton[]
-    title_sub?: string
+    title_sub?: CardlistTitle
     title_flag_pic?: string
     pic?: string
     col?: number
@@ -251,7 +263,7 @@ export interface LeftElement {
     right_bottom_text: string
     cover_image: CoverImage
     pic_scheme: string
-    element_type: string
+    element_type: Type
     tag_icons: any[]
     tag_infos: any[]
     mblog: LeftElementMblog
@@ -284,8 +296,14 @@ export interface CoverImage {
     cut_type: number
 }
 
+export enum Type {
+    SearchTopic = "search_topic",
+    Topic = "topic",
+    Video = "video",
+}
+
 export interface LeftElementMblog {
-    ac_stat: string
+    ac_stat: ACStat
     alchemy_params: AlchemyParams
     annotations: Array<any[] | PurpleAnnotation>
     appid: number
@@ -354,7 +372,7 @@ export interface LeftElementMblog {
     source_type: number
     status: number
     status_city: string
-    status_country: string
+    status_country: StatusCountry
     status_province: string
     text: string
     textLength: number
@@ -366,6 +384,11 @@ export interface LeftElementMblog {
     version: number
     visible: Visible
     analysis_extra: string
+}
+
+export enum ACStat {
+    U0000 = "u0000",
+    U0001 = "u0001",
 }
 
 export interface AlchemyParams {
@@ -401,13 +424,27 @@ export interface ExtraInfo {
 
 export interface HotPage {
     feed_detail_type: number
-    fid: string
+    fid: HotPageFid
+}
+
+export enum HotPageFid {
+    The232532_Mblog = "232532_mblog",
+    The232532_Supergroup = "232532_supergroup",
 }
 
 export interface NumberDisplayStrategy {
     apply_scenario_flag: number
-    display_text: string
+    display_text: DisplayText
     display_text_min_number: number
+}
+
+export enum DisplayText {
+    The100U4E07 = "100u4e07+",
+}
+
+export enum StatusCountry {
+    U4E2Du56Fd = "u4e2du56fd",
+    U82F1U56Fd = "u82f1u56fd",
 }
 
 export interface PurpleURLObject {
@@ -453,7 +490,7 @@ export interface PurpleObject {
     object: FluffyObject
     object_domain_id: string
     object_id: string
-    object_type: string
+    object_type: Type
     request_oid: string
     safe_extparam: string
     safe_status: number
@@ -481,7 +518,7 @@ export interface FluffyObject {
     author_mid?: string
     biz: Biz
     biz_flag?: BizFlag
-    biz_type?: string
+    biz_type?: Type
     client?: string
     compressed_file_meta?: CompressedFileMeta
     copyright?: number
@@ -499,11 +536,11 @@ export interface FluffyObject {
     file_create_type?: string
     file_monitor_type?: string
     id: string
-    image: Image
+    image: PurplePagePic
     input_tags?: InputTags
     links?: LinksClass
     monitor_state?: number
-    object_type: string
+    object_type: Type
     object_type_detail?: string
     origin_total_bitrate?: number
     original_file_md5?: string
@@ -637,7 +674,7 @@ export interface Topic {
     content: string
 }
 
-export interface Image {
+export interface PurplePagePic {
     height?: number
     is_self_cover?: number
     pid?: string
@@ -846,10 +883,13 @@ export interface Visible {
 }
 
 export interface CardGroupMblog {
-    ac_stat: string
+    ac_stat: ACStat
+    ad_state?: number
+    attitude_dynamic_adid?: string
     attitudes_count: number
     bmiddle_pic?: string
     can_edit: boolean
+    cardid?: string
     comment_manage_info: CommentManageInfo
     comments_count: number
     content_auth: number
@@ -858,6 +898,7 @@ export interface CardGroupMblog {
     delThreeYearsStatus: number
     digit_attr: number
     dispatch_ctrl: number
+    expire_time?: number
     extern_safe: number
     f_level: number
     f_level_1: number
@@ -868,7 +909,10 @@ export interface CardGroupMblog {
     hot_page: HotPage
     id: string
     isLongText: boolean
+    is_imported_topic?: boolean
     is_paid: boolean
+    jump_type?: number
+    mark?: string
     mblog_vip_type: number
     mblogtype: number
     mid: string
@@ -879,6 +923,7 @@ export interface CardGroupMblog {
     oversea_filter: string
     oversea_pass: string
     pending_approval_count: number
+    picStatus?: string
     pic_flag?: number
     pic_focus_point?: PicFocusPoint[]
     pic_ids: string[]
@@ -896,11 +941,13 @@ export interface CardGroupMblog {
     source: string
     status: number
     status_city?: string
-    status_country: string
+    status_country: StatusCountry
     status_province: string
+    sync_mblog?: boolean
     text: string
     textLength: number
     thumbnail_pic?: string
+    topic_id?: string
     user: FluffyUser
     visible: Visible
     content_auth_exemption?: number
@@ -911,40 +958,13 @@ export interface CardGroupMblog {
     itemid: null
     analysis_extra: string
     page_info: PurplePageInfo
-    pics?: PurplePic[]
+    pics?: Pic[]
     bid: string
-    cardid?: string
     fid?: number
-    is_imported_topic?: boolean
-    jump_type?: number
-    sync_mblog?: boolean
-    topic_id?: string
     ext_social_time_info?: null | string
     is_controlled_by_server?: number
     timestamp_text?: string
     expire_after?: number
-    picStatus?: string
-    bus_flag?: number
-    attitude_dynamic_members_message?: PurpleAttitudeDynamicMembersMessage
-}
-
-export interface PurpleAttitudeDynamicMembersMessage {
-    bgimg: string
-    colorT: string
-    default_media_url: string
-    media_id: string
-    media_url: string
-    portrait: string
-    protocol: string
-    scene_show_option: number
-    scheme: string
-    user_grace_setting: PurpleUserGraceSetting
-}
-
-export interface PurpleUserGraceSetting {
-    en_US: string
-    zh_CN: string
-    zh_TW: string
 }
 
 export interface MblogButton {
@@ -980,17 +1000,17 @@ export interface DarwinTag {
     enterprise_uid: null
     mapi_url: string
     object_id: string
-    object_type: string
+    object_type: Type
     pc_url: string
 }
 
 export interface PurplePageInfo {
-    type: string
-    object_type?: number
+    type: Type
+    object_type: number
     page_pic: PurplePagePic
     page_url: string
-    page_title: string
-    content1: string
+    page_title: CardlistTitle
+    content1: Content1
     url_ori?: string
     object_id?: string
     title?: string
@@ -999,23 +1019,18 @@ export interface PurplePageInfo {
     play_count?: string
     media_info?: PageInfoMediaInfo
     urls?: Urls
-    icon?: string
+}
+
+export enum Content1 {
+    The0U8Ba8U8Bba0U9605U8Bfb = "0u8ba8u8bba 0u9605u8bfb ",
+    U624Bu6E38U300Au660Eu65E5U65B9U821FArknightsu300Bu8D85U8Bdd = "u624bu6e38u300au660eu65e5u65b9u821fArknightsu300bu8d85u8bdd",
+    U94C1U677Fu70E7U9B3Cu821Ewu7684U5Faeu535Au89C6U9891 = "u94c1u677fu70e7u9b3cu821ewu7684u5faeu535au89c6u9891",
 }
 
 export interface PageInfoMediaInfo {
     stream_url: string
     stream_url_hd: string
     duration: number
-}
-
-export interface PurplePagePic {
-    url: string
-    height?: number | string
-    is_self_cover?: number
-    pid?: string
-    source?: number
-    type?: number
-    width?: number | string
 }
 
 export interface PicFocusPoint {
@@ -1036,14 +1051,38 @@ export interface PicRectangleObject {
     rectangle_objects: FocusPoint[]
 }
 
-export interface PurplePic {
+export interface Pic {
     pid: string
     url: string
-    size: string
+    size: PicSize
     geo: PicGeo
     large: Large
-    videoSrc?: string
-    type?: string
+}
+
+export interface PicGeo {
+    width: number
+    height: number
+    croped: boolean
+}
+
+export interface Large {
+    size: LargeSize
+    url: string
+    geo: LargeGeo
+}
+
+export interface LargeGeo {
+    width: number | string
+    height: number | string
+    croped: boolean
+}
+
+export enum LargeSize {
+    Large = "large",
+}
+
+export enum PicSize {
+    Orj360 = "orj360",
 }
 
 export interface FluffyUser {
@@ -1084,7 +1123,7 @@ export interface RightElement {
     right_bottom_text: string
     cover_image: CoverImage
     pic_scheme: string
-    element_type: string
+    element_type: Type
     tag_icons: any[]
     tag_infos: any[]
     mblog: RightElementMblog
@@ -1100,11 +1139,11 @@ export interface RightElement {
 }
 
 export interface RightElementMblog {
-    ac_stat: string
+    ac_stat: ACStat
     alchemy_params: AlchemyParams
     annotations: Array<any[] | FluffyAnnotation>
     appid: number
-    attitude_dynamic_members_message: FluffyAttitudeDynamicMembersMessage
+    attitude_dynamic_members_message: AttitudeDynamicMembersMessage
     attitudes_count: number
     biz_feature: number
     biz_ids: number[]
@@ -1170,7 +1209,7 @@ export interface RightElementMblog {
     source_type: number
     status: number
     status_city: string
-    status_country: string
+    status_country: StatusCountry
     status_province: string
     text: string
     textLength: number
@@ -1188,7 +1227,7 @@ export interface FluffyAnnotation {
     mapi_request: boolean
 }
 
-export interface FluffyAttitudeDynamicMembersMessage {
+export interface AttitudeDynamicMembersMessage {
     bgimg: string
     colorT: string
     default_media_url: string
@@ -1198,10 +1237,10 @@ export interface FluffyAttitudeDynamicMembersMessage {
     protocol: string
     scene_show_option: number
     scheme: string
-    user_grace_setting: FluffyUserGraceSetting
+    user_grace_setting: UserGraceSetting
 }
 
-export interface FluffyUserGraceSetting {
+export interface UserGraceSetting {
     zh_CN: string
 }
 
@@ -1235,7 +1274,7 @@ export interface TentacledObject {
     object: StickyObject
     object_domain_id: string
     object_id: string
-    object_type: string
+    object_type: Type
     request_oid: string
     safe_extparam: string
     safe_status: number
@@ -1252,7 +1291,7 @@ export interface StickyObject {
     author_mid?: string
     biz: Biz
     biz_flag?: BizFlag
-    biz_type?: string
+    biz_type?: Type
     client?: string
     compressed_file_meta?: CompressedFileMeta
     copyright?: number
@@ -1271,11 +1310,11 @@ export interface StickyObject {
     file_create_type?: string
     file_monitor_type?: string
     id: string
-    image: Image
+    image: PurplePagePic
     input_tags?: InputTags
     links?: LinksClass
     monitor_state?: number
-    object_type: string
+    object_type: Type
     object_type_detail?: string
     original_file_md5?: string
     original_url?: string
@@ -1380,6 +1419,12 @@ export interface CardGroupUser {
     badge?: Badge
 }
 
+export interface Badge {
+    user_name_certificate: number
+    pc_new: number
+    brand_account_2021: number
+}
+
 export interface ContentInfo {
     cover_img: string
     cover_radius: number
@@ -1413,14 +1458,22 @@ export interface Style {
 }
 
 export interface FlowComment {
-    bgcolor: string
-    bgcolor_dark: string
+    bgcolor: Bgcolor
+    bgcolor_dark: BgcolorDark
     user: FlowCommentUser
     mid: string
     is_guest: number
     text: string
     scheme: string
     actionlog: Log
+}
+
+export enum Bgcolor {
+    E8F3Ff = "#E8F3FF",
+}
+
+export enum BgcolorDark {
+    The17232B = "#17232B",
 }
 
 export interface FlowCommentUser {
@@ -1454,7 +1507,7 @@ export interface CardMblog {
     f_level: number
     f_level_1: number
     f_level_2: number
-    falls_pic_focus_point?: any[]
+    falls_pic_focus_point: any[]
     fans: number
     favorited: boolean
     hot_page: HotPage
@@ -1470,24 +1523,24 @@ export interface CardMblog {
     number_display_strategy: NumberDisplayStrategy
     original_pic: string
     pending_approval_count: number
-    picStatus: string
-    pic_flag?: number
-    pic_focus_point?: PicFocusPoint[]
+    picStatus?: string
+    pic_flag: number
+    pic_focus_point: PicFocusPoint[]
     pic_ids: string[]
     pic_num: number
-    pic_rectangle_object?: any[]
+    pic_rectangle_object: PicRectangleObject[]
     region_name: string
     region_opt: number
     reposts_count: number
     reprint_cmt_count: number
     rid: string
-    safe_tags: number
+    safe_tags?: number
     show_additional_indication: number
     show_mlevel: number
     source: string
     status: number
     status_city: string
-    status_country: string
+    status_country: StatusCountry
     status_province: string
     text: string
     textLength: number
@@ -1503,43 +1556,22 @@ export interface CardMblog {
     itemid: null
     analysis_extra: string
     page_info: FluffyPageInfo
-    pics: FluffyPic[]
+    pics: Pic[]
     bid: string
-    ac_stat?: string
+    ac_stat?: ACStat
     dispatch_ctrl?: number
     oversea_filter?: string
     oversea_pass?: string
     social_time_info?: string
-    filterID?: string
 }
 
 export interface FluffyPageInfo {
-    type: string
+    type: Type
     object_type: number
     page_pic: LinksClass
     page_url: string
     page_title: string
-    content1: string
-}
-
-export interface FluffyPic {
-    pid: string
-    url: string
-    size: string
-    geo: FluffyGeo
-    large: Large
-}
-
-export interface FluffyGeo {
-    width: number
-    height: number
-    croped: boolean
-}
-
-export interface TentacledGeo {
-    width: string
-    height: string
-    croped: boolean
+    content1: Content1
 }
 
 export interface TitleInfo {
