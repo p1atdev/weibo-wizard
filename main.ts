@@ -125,9 +125,19 @@ export const downloadImage = async (
 
     let retry = 0
 
-    while (retry > maxRetry) {
+    while (retry < maxRetry) {
         try {
-            const res = await fetch(url)
+            const controller = new AbortController()
+            const timeoutId = setTimeout(() => {
+                controller.abort()
+            }, 3000)
+            const res = await fetch(url, {
+                headers: {
+                    Referer: "https://m.weibo.cn",
+                },
+                signal: controller.signal,
+            })
+            clearTimeout(timeoutId)
 
             if (!res.ok) {
                 throw new Error(`Download image failed: ${url}`)
