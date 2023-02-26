@@ -1,7 +1,8 @@
 import { SearchContainerId, UserContainerId } from "./common.ts"
-import { Command, dirname } from "./deps.ts"
+import { Command, dirname, join } from "./deps.ts"
 import { log } from "./log.ts"
 import { getSearchCards, getUserCards, getPicsFromCards, downloadImages } from "./main.ts"
+import { Card } from "./types/card.ts"
 
 await new Command()
     .name("weibo-wizard")
@@ -91,9 +92,21 @@ await new Command()
 
         const outputPath = output || file.replace(/\.json$/, "")
 
-        await Deno.mkdir(outputPath, {
-            recursive: true,
-        })
+        const qualities = [
+            "masterpiece",
+            "best quality",
+            "high quality",
+            "medium quality",
+            "normal quality",
+            "low quality",
+            "worst quality",
+            "unknown",
+        ]
+        for (const quality of qualities) {
+            await Deno.mkdir(join(outputPath, quality), {
+                recursive: true,
+            })
+        }
 
         try {
             await Deno.stat(file)
@@ -102,7 +115,7 @@ await new Command()
             Deno.exit(1)
         }
 
-        const json = JSON.parse(await Deno.readTextFile(file))
+        const json: Card[] = JSON.parse(await Deno.readTextFile(file))
 
         log.success(json.length, "cards found!")
 

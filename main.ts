@@ -4,6 +4,12 @@ import { tty, colors, join, basename, extname } from "./deps.ts"
 import { log } from "./log.ts"
 import { Card, Type9Card } from "./types/card.ts"
 
+export interface PicWithScore {
+    url: string
+    score: number
+    quality: string
+}
+
 export const flatCards = (cards: Card[]) => {
     return cards.flatMap((card) => {
         switch (card.card_type) {
@@ -86,16 +92,48 @@ export const getSearchCards = async (
 }
 
 export const getPicsFromCards = (cards: Card[]) => {
-    const pics: string[] = []
+    const pics: PicWithScore[] = []
 
     for (const card of cards) {
         if (card.card_type === 9) {
+            const [quality, score] = classifyQuality(card)
             const urls = card.mblog?.pics?.map((pic) => pic.large.url) ?? []
-            pics.push(...urls)
+            pics.push(
+                ...urls.map((url) => {
+                    return {
+                        url,
+                        score,
+                        quality,
+                    }
+                })
+            )
         }
     }
 
     return Array.from(new Set(pics))
+}
+
+export const classifyQuality = (card: Card): [string, number] => {
+    if (card.card_type !== 9) {
+        return ["unknown", -1]
+    }
+    const likes = card.mblog.attitudes_count
+    switch (true) {
+        case likes >= 500:
+            return ["masterpiece", likes]
+        case likes >= 300:
+            return ["best quality", likes]
+        case likes >= 100:
+            return ["high quality", likes]
+        case likes >= 50:
+            return ["medium quality", likes]
+        case likes >= 10:
+            return ["normal quality", likes]
+        case likes >= 1:
+            return ["low quality", likes]
+        default:
+            return ["worst quality", likes]
+    }
 }
 
 export const downloadImage = async (
@@ -161,7 +199,7 @@ export const downloadImage = async (
     }
 }
 
-export const downloadImages = async (pics: string[], outputDir: string, total: number, batch: number) => {
+export const downloadImages = async (pics: PicWithScore[], outputDir: string, total: number, batch: number) => {
     const tasks: Promise<void>[] = []
 
     const count = Math.ceil(total / batch)
@@ -173,13 +211,16 @@ export const downloadImages = async (pics: string[], outputDir: string, total: n
         const end = Math.min((i + 1) * count, total)
 
         const task = async () => {
-            for (const url of pics.slice(start, end)) {
+            for (const { url, score, quality } of pics.slice(start, end)) {
                 // get filename, without any query params
                 const filename = basename(url.split("?")[0])
 
-                tty.eraseLine.cursorSave.text(`${colors.blue("[INFO]")} Downloading ${colors.underline(filename)} ...`)
-                    .cursorRestore
-                await downloadImage(url, filename, outputDir)
+                tty.eraseLine.cursorSave.text(
+                    `${colors.blue("[INFO]")} Downloading ${colors.underline(filename)} <${colors.bold(
+                        quality
+                    )}:${score}> ...`
+                ).cursorRestore
+                await downloadImage(url, filename, join(outputDir, quality))
             }
         }
 
